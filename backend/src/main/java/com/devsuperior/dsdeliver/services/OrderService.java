@@ -29,7 +29,7 @@ public class OrderService {
 	public List<OrderDTO> findAll() {
 		List<Order> list = repository.findOrdersWithProducts();
 
-		return list.stream().map(X -> new OrderDTO(X)).collect(Collectors.toList());
+		return list.stream().map(X -> new OrderDTO(X)).collect(Collectors.toList()); 
 	}
 	
 	@Transactional
@@ -41,6 +41,14 @@ public class OrderService {
 			Product product = productRepository.getOne(p.getId());
 			order.getProducts().add(product);
 		}
+		order = repository.save(order);
+		return new OrderDTO(order);
+	}
+	
+	@Transactional
+	public OrderDTO setDelivered(Long id) {
+		Order order = repository.getOne(id);
+		order.setStatus(OrderStatus.DELIVERED);
 		order = repository.save(order);
 		return new OrderDTO(order);
 	}
